@@ -140,22 +140,22 @@ spec:
         echo -n "$enableKeylessSigning" | tee "$(results.enableKeylessSigning.path)"
         echo -n "$defaultOIDCIssuer" | tee "$(results.defaultOIDCIssuer.path)"
         echo -n "$rekorExternalUrl" | tee "$(results.rekorExternalUrl.path)"
-        if [ -z "$rekorInternalUrl" ]; then
-          echo -n "$rekorExternalUrl" | tee "$(results.rekorUrl.path)"
-        else
-          echo -n "$rekorInternalUrl" | tee "$(results.rekorUrl.path)"
-        fi
+        prefer_internal_or_external() {
+          local internal="$1"
+          local external="$2"
+          local result_path="$3"
+
+          if [ -n "$internal" ]; then
+            echo -n "$internal" | tee "$result_path"
+          else
+            echo -n "$external" | tee "$result_path"
+          fi
+        }
+
+        prefer_internal_or_external "$rekorInternalUrl" "$rekorExternalUrl" "$(results.rekorUrl.path)"
         echo -n "$fulcioExternalUrl" | tee "$(results.fulcioExternalUrl.path)"
-        if [ -z "$fulcioInternalUrl" ]; then
-          echo -n "$fulcioExternalUrl" | tee "$(results.fulcioUrl.path)"
-        else
-          echo -n "$fulcioInternalUrl" | tee "$(results.fulcioUrl.path)"
-        fi
+        prefer_internal_or_external "$fulcioInternalUrl" "$fulcioExternalUrl" "$(results.fulcioUrl.path)"
         echo -n "$tufExternalUrl" | tee "$(results.tufExternalUrl.path)"
-        if [ -z "$tufInternalUrl" ]; then
-          echo -n "$tufExternalUrl" | tee "$(results.tufUrl.path)"
-        else
-          echo -n "$tufInternalUrl" | tee "$(results.tufUrl.path)"
-        fi
+        prefer_internal_or_external "$tufInternalUrl" "$tufExternalUrl" "$(results.tufUrl.path)"
         echo -n "$buildIdentityRegexp" | tee "$(results.buildIdentityRegexp.path)"
         echo -n "$tektonChainsIdentity" | tee "$(results.tektonChainsIdentity.path)"
