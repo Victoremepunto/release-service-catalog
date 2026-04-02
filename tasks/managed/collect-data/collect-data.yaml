@@ -77,6 +77,10 @@ spec:
       type: string
       description: The name of the key in the ConfigMap that contains the CA bundle data
       default: ca-bundle.crt
+    - name: caCertPath
+      type: string
+      description: Path to CA certificate bundle for TLS verification with self-signed certificates
+      default: /etc/pki/tls/certs/ca-bundle.crt
   results:
     - name: release
       type: string
@@ -135,7 +139,12 @@ spec:
       - mountPath: /var/workdir
         name: workdir
       - name: trusted-ca
-        mountPath: /mnt/trusted-ca
+        mountPath: /etc/pki/tls/certs/ca-bundle.crt
+        subPath: ca-bundle.crt
+        readOnly: true
+      - name: trusted-ca
+        mountPath: /etc/ssl/certs/ca-custom-bundle.crt
+        subPath: ca-bundle.crt
         readOnly: true
     env:
       - name: IMAGE_EXPIRES_AFTER
@@ -154,7 +163,7 @@ spec:
           memory: 64Mi
         requests:
           memory: 64Mi
-          cpu: 10m
+          cpu: 50m
       env:
         - name: "RELEASE"
           value: '$(params.release)'
@@ -203,7 +212,9 @@ spec:
         echo -e "\nFetching Snapshot Spec"
         SNAPSHOTSPEC_PATH="$(params.subdirectory)/snapshot_spec.json"
         echo -n "$SNAPSHOTSPEC_PATH" > "$(results.snapshotSpec.path)"
-        get-resource "snapshot" "${SNAPSHOT}" "{.spec}" | tee "$(params.dataDir)/$SNAPSHOTSPEC_PATH"
+        get-resource "snapshot" "${SNAPSHOT}" "{.spec}" \
+          | jq '(if .componentGroup == null then .componentGroup = .application else . end) | del(.application)' \
+          | tee "$(params.dataDir)/$SNAPSHOTSPEC_PATH"
         labels=$(get-resource "snapshot" "${SNAPSHOT}" "{.metadata.labels}")
         BUILD_ID=$(jq -r '."appstudio.openshift.io/build-pipelinerun" // ""' <<< "${labels}")
         echo -n "${BUILD_ID}" | tee "$(results.snapshotBuildId.path)"
@@ -380,3 +391,5 @@ spec:
           value: $(params.dataDir)
         - name: sourceDataArtifact
           value: $(results.sourceDataArtifact.path)
+        - name: caCertPath
+          value: $(params.caCertPath)
