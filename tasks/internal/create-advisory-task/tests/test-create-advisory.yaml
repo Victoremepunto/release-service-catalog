@@ -50,7 +50,7 @@ spec:
             type: string
         steps:
           - name: check-result
-            image: quay.io/konflux-ci/release-service-utils@sha256:a9fc6af1db5fefe43c655b3241326e8115cd9569b810bac7effb33b45dd2a855
+            image: quay.io/konflux-ci/release-service-utils@sha256:f77066ee22c2f4ec93c47969708570a4354db46499f56b28dac7e3019b641edb
             script: |
               #!/usr/bin/env bash
               set -eux
