@@ -60,6 +60,7 @@ spec:
                   "components": [
                     {
                       "name": "bootc-cuda-aws-disk-image-3-3",
+                      "contentType": "disk-image",
                       "staged": {
                         "destination": "rhelai-3_DOT_3-for-rhel-9-x86_64-isos",
                         "version": "3.3",
