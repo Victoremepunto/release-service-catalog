@@ -147,7 +147,7 @@ spec:
         #!/usr/bin/env bash
         set -eu
 
-        CLOUD_CREDENTIALS="$(cat /etc/secrets/key)"
+        CLOUD_CREDENTIALS="$(cat /etc/secrets/cloudMarketplacesSecret)"
 
         # export variables required by the script "marketplacesvm_push_wrapper" in release-service-utils
         export CLOUD_CREDENTIALS
