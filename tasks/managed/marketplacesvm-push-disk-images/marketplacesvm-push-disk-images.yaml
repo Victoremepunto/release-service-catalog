@@ -182,7 +182,7 @@ spec:
             BUILD_NAME=$(jq -er '.productCode' <<< "${PRODUCT_INFO}")
             BUILD_VERSION=$(jq -er '.productVersionName' <<< "${PRODUCT_INFO}")
             BUILD_ARCH=$(jq -er '.staged.files[0].filename' <<< "${COMPONENT}")
-            BUILD_ARCH=${BUILD_ARCH%\.*}   # Rstrip on . to remove the extension
+            BUILD_ARCH=$(echo "$BUILD_ARCH" | sed -e 's/\.[.a-zA-Z0-9]*$//' )   # Rstrip all extensions
             BUILD_ARCH=${BUILD_ARCH##*-}  # Lstrip on - on get the arch
             RESOURCES_JSON='
             {
