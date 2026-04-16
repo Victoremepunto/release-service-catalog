@@ -191,7 +191,6 @@ spec:
                 "api": "v1",
                 "resource": "CloudImage",
                 "description": "",
-                "boot_mode": "hybrid",
                 "build": {},
                 "images": []
             }'
