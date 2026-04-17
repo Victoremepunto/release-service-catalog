@@ -145,14 +145,20 @@ spec:
           value: $(params.uploadContainerName)
       script: |
         #!/usr/bin/env bash
-        set -eu
+        set -eux
 
-        CLOUD_CREDENTIALS="$(cat /etc/secrets/cloudMarketplacesSecret)"
+        echo "DEBUG: Sanity validation of credentials"
+        JSON_FILES=(/etc/secrets/*.json)
+        for file in "${JSON_FILES[@]}"; do
+            if ! jq -e 'has("marketplace_account") and has("auth")' "$file" > /dev/null 2>&1; then
+                echo "ERROR: Validation failed for credential file: '$file'"
+                echo "The file is missing required keys ('marketplace_account' or 'auth')."
+                exit 1
+            fi
+        done
 
         # export variables required by the script "marketplacesvm_push_wrapper" in release-service-utils
-        export CLOUD_CREDENTIALS
-
-        set -x
+        export CLOUD_CREDENTIALS=$(IFS=,; echo "${JSON_FILES[*]}")
 
         # Setup required variables
         SNAPSHOT_JSON=$(jq -c '.' "$(params.dataDir)/$(params.snapshotPath)")
