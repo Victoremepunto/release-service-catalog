@@ -134,7 +134,7 @@ spec:
         - name: sourceDataArtifact
           value: $(params.sourceDataArtifact)
     - name: pull-and-push-images-to-marketplaces
-      image: quay.io/konflux-ci/release-service-utils@sha256:3cb03b14ac9d90ff27070036ce2b50712e65aa285daeb28852254a745bb25dfc
+      image: quay.io/konflux-ci/release-service-utils@sha256:42d0820b4a7a5998a0d8f9549928120f0d527a7e78336ed0e33b6543057d74af
       computeResources:
         limits:
           memory: 1Gi
